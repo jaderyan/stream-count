@@ -7,6 +7,12 @@ async function addUser(userId) {
   return newUser;
 }
 
+async function removeUser(userId) {
+  await User.deleteOne({ userId });
+
+  return 'User has no active streams and have been removed from tracking';
+}
+
 async function getUser(req, res, next) {
   const { userId } = req.params;
 
@@ -54,7 +60,34 @@ async function startStream(req, res, next) {
   }
 }
 
+async function stopStream(req, res, next) {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findOne({ userId });
+
+    if (user) {
+      // only increase count if user has less than 3 streams
+      user.streams -= 1;
+      await user.save();
+
+      if (user.streams === 0) {
+        const data = await removeUser(userId);
+        return res.json(data);
+      }
+
+      return res.send(user);
+    }
+    return res.status(404).json({
+      error: 'User has no active streams to stop',
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
 module.exports = {
   getUser,
   startStream,
+  stopStream,
 };
