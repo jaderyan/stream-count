@@ -58,3 +58,24 @@ describe('POST /api/streams/users/:userId/start', () => {
     expect(res.body.error).to.equal('Maximum number of streams reached');
   });
 });
+
+describe('POST /api/streams/users/:userId/stop', () => {
+  it('decreases the stream count for a given user', async () => {
+    await request.post('/api/streams/users/1/start').expect(200);
+    const res = await request.post('/api/streams/users/1/stop').expect(200);
+
+    expect(res.body.streams).to.equal(1);
+  });
+
+  it('if the given user does not exsist, returns a 404', async () => {
+    const res = await request.post('/api/streams/users/2/stop').expect(404);
+
+    expect(res.body.error).to.equal('User has no active streams to stop');
+  });
+
+  it('if the stream count becomes 0 after stopping, the user is removed from the database', async () => {
+    const res = await request.post('/api/streams/users/1/stop').expect(200);
+
+    expect(res.body).to.equal('User has no active streams and have been removed from tracking');
+  });
+});
