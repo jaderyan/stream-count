@@ -6,6 +6,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const router = require('./routes');
 const config = require('./config');
 
 const URL = config.DB[process.env.NODE_ENV];
@@ -20,5 +21,7 @@ mongoose
   .catch((error) => console.log(`connection failed - ${error}`));
 
 app.use(bodyParser.json());
+
+app.use('/api', router);
 
 module.exports = app;
