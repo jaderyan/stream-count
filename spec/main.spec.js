@@ -82,12 +82,18 @@ describe('POST /api/streams/users/:userId/stop', () => {
 
 describe('DELETE /api/streams/users/:userId', () => {
   it('removes a user from the database', async () => {
-    const res = await request.delete('/api/streams/1').expect(200);
+    const res = await request.delete('/api/streams/users/1').expect(200);
 
     expect(res.body).to.equal('User sucessfully deleted');
 
     const user = await User.findOne({ userId: 1 });
 
     expect(user).to.equal(null);
+  });
+
+  it('throws an error if user does not exist to be deleted', async () => {
+    const res = await request.delete('/api/streams/users/2').expect(409);
+
+    expect(res.body.error).to.equal('User does not exist');
   });
 });
