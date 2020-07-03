@@ -17,11 +17,7 @@ async function removeUser(userId, next) {
   try {
     const { deletedCount } = await User.deleteOne({ userId });
 
-    if (deletedCount === 0) {
-      const err = new Error('User does not exist');
-      err.statusCode = 409;
-      return next(err);
-    }
+    return deletedCount > 0;
   } catch (err) {
     next(err);
   }
@@ -86,8 +82,15 @@ async function stopStream(req, res, next) {
 
       // if user now has no streams remove them from database
       if (user.streams === 0) {
-        await removeUser(userId, next);
-        return res.json({ message: 'User has no active streams and have been removed from tracking' });
+        const userRemoved = await removeUser(userId, next);
+
+        if (userRemoved) {
+          res.json({ message: 'User has no active streams and have been removed from tracking' });
+        } else {
+          const err = new Error('User has no active streams but cannot be removed from tracking');
+          err.statusCode = 404;
+          return next(err);
+        }
       }
 
       return res.send(user);
@@ -104,9 +107,14 @@ async function deleteUser(req, res, next) {
   const { userId } = req.params;
 
   try {
-    await removeUser(userId, next);
+    const userRemoved = await removeUser(userId, next);
 
-    return res.json({ message: 'User sucessfully deleted' });
+    if (userRemoved) {
+      return res.json({ message: 'User sucessfully deleted' });
+    }
+    const err = new Error('User does not exist');
+    err.statusCode = 409;
+    return next(err);
   } catch (err) {
     return next(err);
   }
