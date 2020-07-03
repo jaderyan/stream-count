@@ -17,16 +17,44 @@ after(() => {
   mongoose.disconnect();
 });
 
-describe('GET /streams/users/:id', () => {
-  it('returns the user id and number of streams for a give user', () => request
-    .get('/api/streams/users/1')
-    .expect(200)
-    .then((res) => expect(res.body.userId).to.equal(1)));
+describe('GET /api/streams/users/:userId', () => {
+  it('returns the user id and number of streams for a give user', async () => {
+    const res = await request
+      .get('/api/streams/users/1')
+      .expect(200);
 
-  it('returns a 404 if there is no user with that id', () => request
-    .get('/api/streams/users/2')
-    .expect(404)
-    .then((res) => {
-      expect(res.body.error).to.equal('User not found');
-    }));
+    expect(res.body.userId).to.equal(1);
+  });
+
+  it('returns a 404 if there is no user with that id', async () => {
+    const res = await request
+      .get('/api/streams/users/2')
+      .expect(404);
+
+    expect(res.body.error).to.equal('User not found');
+  });
+});
+
+describe('POST /api/streams/users/:userId/start', () => {
+  it('increases the stream count for a given user', async () => {
+    const res = await request.post('/api/streams/users/1/start').expect(200);
+
+    expect(res.body.streams).to.equal(2);
+  });
+
+  it('if the given user does not exsist, adds them to the database and increases the stream count', async () => {
+    const res = await request.post('/api/streams/users/2/start').expect(201);
+
+    expect(res.body.streams).to.equal(1);
+  });
+
+  it('if the given user already has 3 streams, will return an error message and not increase the count', async () => {
+    await request.post('/api/streams/users/2/start').expect(201);
+    await request.post('/api/streams/users/2/start').expect(200);
+    await request.post('/api/streams/users/2/start').expect(200);
+
+    const res = await request.post('/api/streams/users/2/start').expect(403);
+
+    expect(res.body.error).to.equal('Maximum number of streams reached');
+  });
 });
