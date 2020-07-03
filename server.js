@@ -24,4 +24,17 @@ app.use(bodyParser.json());
 
 app.use('/api', router);
 
+app.use('/*', (req, res, next) => {
+  const err = new Error('Invalid path');
+  err.statusCode = 404;
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  res
+    .status(err.statusCode)
+    .json({ error: err.message, status: err.statusCode });
+  next();
+});
+
 module.exports = app;
