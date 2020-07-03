@@ -23,10 +23,10 @@ describe('GET /streams/users/:id', () => {
     .expect(200)
     .then((res) => expect(res.body.userId).to.equal(1)));
 
-  it('returns a 404 if there is no user with that id', () => {
-    request
-      .get('/api/streams/users/2')
-      .expect(404)
-      .then((res) => expect(res.body.error).to.equal('User not found'));
-  });
+  it('returns a 404 if there is no user with that id', () => request
+    .get('/api/streams/users/2')
+    .expect(404)
+    .then((res) => {
+      expect(res.body.error).to.equal('User not found');
+    }));
 });
