@@ -6,7 +6,7 @@
   "author": "Jade Ryan",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon index.js",
     "test": "mocha --exit spec"
   },
   "dependencies": {
