@@ -79,3 +79,15 @@ describe('POST /api/streams/users/:userId/stop', () => {
     expect(res.body).to.equal('User has no active streams and have been removed from tracking');
   });
 });
+
+describe('DELETE /api/streams/users/:userId', () => {
+  it('removes a user from the database', async () => {
+    const res = await request.delete('/api/streams/1').expect(200);
+
+    expect(res.body).to.equal('User sucessfully deleted');
+
+    const user = await User.findOne({ userId: 1 });
+
+    expect(user).to.equal(null);
+  });
+});
