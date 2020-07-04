@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "mocha --exit spec"
+    "test": "mocha --exit spec",
+    "seed": "node ./seed/index.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
