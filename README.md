@@ -103,3 +103,9 @@ I am currently using single MongoDB database, but for scaling purposes could swi
 The API could also be deployed to AWS with a load balancer to make use of auto-scaling, ensuring high demand can be reached but resource is not wasted.
 
 A queue could also be implemented for starting/stopping stream requests to ensure different processes are not writing to the same data source.
+
+## Future improvements
+
+With more time I would have liked to Dockerize the application for consistency across different development enviroment and deployment to AWS.
+
+I also would have added some official documentation for the API using a tool like [Swagger](https://swagger.io/docs/).
