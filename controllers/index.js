@@ -34,6 +34,8 @@ async function getUser(req, res, next) {
     if (user) {
       return res.send(user);
     }
+
+    // send error if user doesn't exsist
     const err = new Error('User not found');
     err.statusCode = 404;
     return next(err);
@@ -56,12 +58,14 @@ async function startStream(req, res, next) {
 
         return res.status(200).send(user);
       }
+
+      // send error message if user has reached maximum streams
       const err = new Error('Maximum number of streams reached');
       err.statusCode = 403;
       next(err);
     }
 
-    // if there is no new user create one with one active stream
+    // if there is no user create one with one active stream
     const newUser = await addUser(userId, next);
 
     return res.status(201).send(newUser);
@@ -95,6 +99,8 @@ async function stopStream(req, res, next) {
 
       return res.send(user);
     }
+
+    // if user doesn't exist send an error message
     return res.status(404).json({
       error: 'User has no active streams to stop',
     });
@@ -112,6 +118,8 @@ async function deleteUser(req, res, next) {
     if (userRemoved) {
       return res.json({ message: 'User sucessfully deleted' });
     }
+
+    // send error if user did not exist to be deleted
     const err = new Error('User does not exist');
     err.statusCode = 409;
     return next(err);

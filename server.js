@@ -11,14 +11,20 @@ const config = require('./config');
 
 const URL = config.DB[process.env.NODE_ENV];
 
-mongoose
-  .connect(URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  })
-  .then(() => console.log(`successfully connected to ${URL}`))
-  .catch((error) => console.log(`connection failed - ${error}`));
+const connectDb = async () => {
+  try {
+    await mongoose.connect(URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    });
+    console.info(`successfully connected to ${URL}`);
+  } catch (error) {
+    console.error(`connection failed - ${error}`);
+  }
+};
+
+connectDb();
 
 app.use(bodyParser.json());
 
