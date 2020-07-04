@@ -1,4 +1,4 @@
-# Steam Count
+# Stream Count
 
 A service which checks how many video streams a given user is watching and prevents a user watching more than 3 video streams concurrently.
 
@@ -72,11 +72,15 @@ mongod
 
 To seed the database run:
 
-`npm run seed`
+```
+npm run seed
+```
 
 Finally to run the server enter the following command in your terminal window:
 
-`npm start`
+```
+npm start
+```
 
 This will run the server on port 3000. All endpoints can be found locally on http://localhost:3000 .
 
