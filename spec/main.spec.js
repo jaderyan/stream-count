@@ -17,10 +17,10 @@ after(() => {
   mongoose.disconnect();
 });
 
-describe('GET /api/streams/users/:userId', () => {
+describe('GET /api/v1/streams/users/:userId', () => {
   it('returns the user id and number of streams for a give user', async () => {
     const res = await request
-      .get('/api/streams/users/1')
+      .get('/api/v1/streams/users/1')
       .expect(200);
 
     expect(res.body.userId).to.equal(1);
@@ -28,61 +28,61 @@ describe('GET /api/streams/users/:userId', () => {
 
   it('returns a 404 if there is no user with that id', async () => {
     const res = await request
-      .get('/api/streams/users/2')
+      .get('/api/v1/streams/users/2')
       .expect(404);
 
     expect(res.body.error).to.equal('User not found');
   });
 });
 
-describe('POST /api/streams/users/:userId/start', () => {
+describe('POST /api/v1/streams/users/:userId/start', () => {
   it('increases the stream count for a given user', async () => {
-    const res = await request.post('/api/streams/users/1/start').expect(200);
+    const res = await request.post('/api/v1/streams/users/1/start').expect(200);
 
     expect(res.body.streams).to.equal(2);
   });
 
   it('if the given user does not exsist, adds them to the database and increases the stream count', async () => {
-    const res = await request.post('/api/streams/users/2/start').expect(201);
+    const res = await request.post('/api/v1/streams/users/2/start').expect(201);
 
     expect(res.body.streams).to.equal(1);
   });
 
   it('if the given user already has 3 streams, will return an error message and not increase the count', async () => {
-    await request.post('/api/streams/users/2/start').expect(201);
-    await request.post('/api/streams/users/2/start').expect(200);
-    await request.post('/api/streams/users/2/start').expect(200);
+    await request.post('/api/v1/streams/users/2/start').expect(201);
+    await request.post('/api/v1/streams/users/2/start').expect(200);
+    await request.post('/api/v1/streams/users/2/start').expect(200);
 
-    const res = await request.post('/api/streams/users/2/start').expect(403);
+    const res = await request.post('/api/v1/streams/users/2/start').expect(403);
 
     expect(res.body.error).to.equal('Maximum number of streams reached');
   });
 });
 
-describe('POST /api/streams/users/:userId/stop', () => {
+describe('POST /api/v1/streams/users/:userId/stop', () => {
   it('decreases the stream count for a given user', async () => {
-    await request.post('/api/streams/users/1/start').expect(200);
-    const res = await request.post('/api/streams/users/1/stop').expect(200);
+    await request.post('/api/v1/streams/users/1/start').expect(200);
+    const res = await request.post('/api/v1/streams/users/1/stop').expect(200);
 
     expect(res.body.streams).to.equal(1);
   });
 
   it('if the given user does not exsist, returns a 404', async () => {
-    const res = await request.post('/api/streams/users/2/stop').expect(404);
+    const res = await request.post('/api/v1/streams/users/2/stop').expect(404);
 
     expect(res.body.error).to.equal('User has no active streams to stop');
   });
 
   it('if the stream count becomes 0 after stopping, the user is removed from the database', async () => {
-    const res = await request.post('/api/streams/users/1/stop').expect(200);
+    const res = await request.post('/api/v1/streams/users/1/stop').expect(200);
 
     expect(res.body.message).to.equal('User has no active streams and have been removed from tracking');
   });
 });
 
-describe('DELETE /api/streams/users/:userId', () => {
+describe('DELETE /api/v1/streams/users/:userId', () => {
   it('removes a user from the database', async () => {
-    const res = await request.delete('/api/streams/users/1').expect(200);
+    const res = await request.delete('/api/v1/streams/users/1').expect(200);
 
     expect(res.body.message).to.equal('User sucessfully deleted');
 
@@ -92,7 +92,7 @@ describe('DELETE /api/streams/users/:userId', () => {
   });
 
   it('throws an error if user does not exist to be deleted', async () => {
-    const res = await request.delete('/api/streams/users/2').expect(409);
+    const res = await request.delete('/api/v1/streams/users/2').expect(409);
 
     expect(res.body.error).to.equal('User does not exist');
   });

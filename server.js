@@ -22,7 +22,7 @@ mongoose
 
 app.use(bodyParser.json());
 
-app.use('/api', router);
+app.use('/api/v1', router);
 
 app.use('/*', (req, res, next) => {
   const err = new Error('Invalid path');
